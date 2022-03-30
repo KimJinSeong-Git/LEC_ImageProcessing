@@ -6,6 +6,7 @@
 using namespace std;
 
 // Proto type
+void genRaw(unsigned char* imageBuffer);
 int smoothRamp(int col);
 double equation(int col, double x1, double y1, double x2, double y2);
 
@@ -25,7 +26,7 @@ int main() {
 
 	// 파일 저장_raw 파일
 	FILE* fp;
-	fopen_s(&fp, "HW1-1(v5).raw", "wb");
+	fopen_s(&fp, "HW1-1(v6).raw", "wb");
 	fwrite(imageBuffer, sizeof(unsigned char), imageSize * imageSize, fp);
 	fclose(fp);
 
@@ -67,6 +68,7 @@ int main() {
 
 	return 0;
 }
+
 
 int smoothRamp(int col) {
 	double brightness;
