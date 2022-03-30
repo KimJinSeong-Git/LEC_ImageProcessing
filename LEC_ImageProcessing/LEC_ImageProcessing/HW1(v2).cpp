@@ -16,8 +16,6 @@ int main() {
 
 	unsigned char imageBuffer[512][512];
 
-	// 메모리 할당
-
 	for (int col = 0; col < imageSize; col++) {
 		bright = smoothRamp(col);
 		for (int row = 0; row < imageSize; row++) {
@@ -25,10 +23,45 @@ int main() {
 		}
 	}
 
-	// 파일 저장
+	// 파일 저장_raw 파일
 	FILE* fp;
 	fopen_s(&fp, "HW1-1(v5).raw", "wb");
+	fwrite(imageBuffer, sizeof(unsigned char), imageSize * imageSize, fp);
+	fclose(fp);
 
+	// Header 지정
+	BITMAPFILEHEADER fh;
+	BITMAPINFOHEADER ih;
+	RGBQUAD rgb[256];
+	for (int i = 0; i < 256; i++)
+	{
+		rgb[i].rgbBlue = i;
+		rgb[i].rgbGreen = i;
+		rgb[i].rgbRed = i;
+		rgb[i].rgbReserved = 0;
+	}
+	memset(&fh, 0, sizeof(BITMAPFILEHEADER));
+	memset(&ih, 0, sizeof(BITMAPINFOHEADER));
+	memset(&rgb, 0, sizeof(RGBQUAD) * 256);
+	fh.bfOffBits = 1078; // RGBQUAD + InfoHeader + FileHeader only 8bit mode if 24bit == 54; 40+ 14;
+
+	fh.bfSize = imageSize * imageSize + sizeof(RGBQUAD) * 256 + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+	fh.bfType = 19778;
+
+	ih.biBitCount = 8;
+	ih.biHeight = imageSize;
+	ih.biPlanes = 1;
+	ih.biSize = 40;
+	ih.biSizeImage = imageSize * imageSize;
+	ih.biWidth = imageSize;
+	ih.biXPelsPerMeter = 0;
+	ih.biYPelsPerMeter = 0;
+
+	// 파일 저장_bmp파일
+	fopen_s(&fp, "HW1-2.bmp", "wb");
+	fwrite(&fh, sizeof(BITMAPFILEHEADER), 1, fp);
+	fwrite(&ih, sizeof(BITMAPINFOHEADER), 1, fp);
+	fwrite(rgb, sizeof(RGBQUAD), 256, fp);
 	fwrite(imageBuffer, sizeof(unsigned char), imageSize * imageSize, fp);
 	fclose(fp);
 
