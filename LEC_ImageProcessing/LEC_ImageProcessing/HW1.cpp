@@ -15,24 +15,24 @@ int main() {
 	int bright;
 
 	// 메모리 할당
-	char** imageBuffer;
-	imageBuffer = (char**)malloc(sizeof(char*) * imageSize);
+	unsigned char** imageBuffer;
+	imageBuffer = (unsigned char**)malloc(sizeof(unsigned char*) * imageSize);
 	for (int i = 0; i < imageSize; i++) {
-		imageBuffer[i] = (char*)malloc(sizeof(char) * imageSize);
+		imageBuffer[i] = (unsigned char*)malloc(sizeof(unsigned char) * imageSize);
 	}
 
 	for (int col = 0; col < imageSize; col++) {
 		bright = smoothRamp(col);
 		for (int row = 0; row < imageSize; row++) {
-			imageBuffer[row][col] = bright;
+			imageBuffer[col][row] = 0;
 		}
 	}
 	
 	// 파일 저장
 	FILE* fp;
-	fopen_s(&fp, "HW1-1.raw", "wb");
+	fopen_s(&fp, "HW1-1(v5).raw", "wb");
 
-	fwrite(imageBuffer, sizeof(char), imageSize* imageSize, fp);
+	fwrite(imageBuffer, sizeof(unsigned char), imageSize*imageSize, fp);
 	fclose(fp);
 	
 	// 메모리 해제
