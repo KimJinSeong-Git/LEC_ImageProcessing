@@ -17,7 +17,7 @@ int main() {
 
 
 	FILE* rawfile;
-	fopen_s(&rawfile, "HW1-1(v12).raw", "rb");
+	fopen_s(&rawfile, "HW1-1.raw", "rb");
 	fread(imageBuffer, sizeof(char), imageSize * imageSize, rawfile);
 
 	// 비트맵 헤더 추가
@@ -34,12 +34,9 @@ int main() {
 	fread(&IF, sizeof(BITMAPINFOHEADER), 1, infile);
 	fread(hRGB, sizeof(RGBQUAD), 256, infile);
 
-	//BYTE* lpImg = new BYTE[IF.biSizeImage];
-	//fread(lpImg, sizeof(char), imageSize * imageSize, rawfile);
-
 	// BMP로 저장
 	FILE* outfile;
-	fopen_s(&outfile, "HW1-2(v7).bmp", "wb");
+	fopen_s(&outfile, "HW1-2.bmp", "wb");
 	fwrite(&HF, sizeof(BITMAPFILEHEADER), 1, outfile);
 	fwrite(&IF, sizeof(BITMAPINFOHEADER), 1, outfile);
 	fwrite(hRGB, sizeof(RGBQUAD), 256, outfile);
@@ -48,25 +45,4 @@ int main() {
 	fclose(outfile);
 
 	return 0;
-}
-
-
-int smoothRamp(int col) {
-	double brightness;
-	if (col < 100)
-		brightness = 120;
-	else if (col < 200)
-		brightness = equation(col, 100, 120, 200, 135);
-	else if (col < 280)
-		brightness = equation(col, 200, 135, 280, 225);
-	else if (col < 300)
-		brightness = equation(col, 280, 225, 300, 235);
-	else
-		brightness = 240;
-
-	return (int)brightness;
-}
-
-double equation(int col, double x1, double y1, double x2, double y2) {
-	return ((y2 - y1) / (x2 - x1)) * (col - x1) + y1;
 }

@@ -12,21 +12,20 @@ double equation(int col, double x1, double y1, double x2, double y2);
 // Main
 int main() {
 	int imageSize = 512;
-	int bright;
 
 	unsigned char imageBuffer[512][512];
+	unsigned char tempBuffer[512][512];
 
-	for (int col = 0; col < imageSize; col++) {
-		bright = smoothRamp(col);
-		for (int row = 0; row < imageSize; row++) {
-			imageBuffer[row][col] = bright;
+
+	FILE* rawfile;
+	fopen_s(&rawfile, "HW1-1.raw", "rb");
+	fread(imageBuffer, sizeof(char), imageSize * imageSize, rawfile);
+
+	for (int row = 0; row < imageSize; row++) {
+		for (int col = 0; col < imageSize; col++) {
+			tempBuffer[col][imageSize - row] = imageBuffer[row][col];
 		}
 	}
-
-	// 파일 저장_raw 파일
-	FILE* rawfile;
-	fopen_s(&rawfile, "HW1-1(v9).raw", "wb");
-	fwrite(imageBuffer, sizeof(unsigned char), imageSize * imageSize, rawfile);
 
 	// 비트맵 헤더 추가
 	char inputImage[50] = "lena_bmp_512x512_new.bmp";
@@ -42,50 +41,16 @@ int main() {
 	fread(&IF, sizeof(BITMAPINFOHEADER), 1, infile);
 	fread(hRGB, sizeof(RGBQUAD), 256, infile);
 
-	BYTE* lpImg = new BYTE[IF.biSizeImage];
-	fread(lpImg, sizeof(char), imageSize * imageSize, rawfile);
-
 	// BMP로 저장
 	FILE* outfile;
-	fopen_s(&outfile, "HW1-2(v5).bmp", "wb");
+	fopen_s(&outfile, "HW1-3.bmp", "wb");
 	fwrite(&HF, sizeof(BITMAPFILEHEADER), 1, outfile);
 	fwrite(&IF, sizeof(BITMAPINFOHEADER), 1, outfile);
 	fwrite(hRGB, sizeof(RGBQUAD), 256, outfile);
-	fwrite(imageBuffer, sizeof(unsigned char), imageSize * imageSize, outfile);
+	fwrite(tempBuffer, sizeof(unsigned char), imageSize * imageSize, outfile);
 	fclose(rawfile);
 	fclose(outfile);
-
-	FILE* lastFile;
-	fopen_s(&lastFile, "HW1-3.bmp", "wb");
-	fwrite(&HF, sizeof(BITMAPFILEHEADER), 1, lastFile);
-	fwrite(&IF, sizeof(BITMAPINFOHEADER), 1, lastFile);
-	fwrite(hRGB, sizeof(RGBQUAD), 256, lastFile);
-	fwrite(imageBuffer, sizeof(unsigned char), imageSize * imageSize, lastFile);
-
 	fclose(infile);
-	fclose(lastFile);
-
 
 	return 0;
-}
-
-
-int smoothRamp(int col) {
-	double brightness;
-	if (col < 100)
-		brightness = 120;
-	else if (col < 200)
-		brightness = equation(col, 100, 120, 200, 135);
-	else if (col < 280)
-		brightness = equation(col, 200, 135, 280, 225);
-	else if (col < 300)
-		brightness = equation(col, 280, 225, 300, 235);
-	else
-		brightness = 240;
-
-	return (int)brightness;
-}
-
-double equation(int col, double x1, double y1, double x2, double y2) {
-	return ((y2 - y1) / (x2 - x1)) * (col - x1) + y1;
 }

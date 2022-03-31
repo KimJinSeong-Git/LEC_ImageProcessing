@@ -25,7 +25,7 @@ int main() {
 
 	// 파일 저장_raw 파일
 	FILE* rawfile;
-	fopen_s(&rawfile, "HW1-1(v12).raw", "wb");
+	fopen_s(&rawfile, "HW1-1.raw", "wb");
 	fwrite(imageBuffer, sizeof(unsigned char), imageSize * imageSize, rawfile);	
 
 	return 0;
