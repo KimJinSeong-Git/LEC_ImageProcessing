@@ -6,7 +6,6 @@
 using namespace std;
 
 // Proto type
-void genRaw(unsigned char* imageBuffer);
 int smoothRamp(int col);
 double equation(int col, double x1, double y1, double x2, double y2);
 
@@ -25,46 +24,36 @@ int main() {
 	}
 
 	// 파일 저장_raw 파일
-	FILE* fp;
-	fopen_s(&fp, "HW1-1(v6).raw", "wb");
-	fwrite(imageBuffer, sizeof(unsigned char), imageSize * imageSize, fp);
-	fclose(fp);
+	FILE* rawfile;
+	fopen_s(&rawfile, "HW1-1(v7).raw", "wb");
+	fwrite(imageBuffer, sizeof(unsigned char), imageSize * imageSize, rawfile);
+	//fclose(fp);
+	
 
-	// Header 지정
-	BITMAPFILEHEADER fh;
-	BITMAPINFOHEADER ih;
-	RGBQUAD rgb[256];
-	for (int i = 0; i < 256; i++)
-	{
-		rgb[i].rgbBlue = i;
-		rgb[i].rgbGreen = i;
-		rgb[i].rgbRed = i;
-		rgb[i].rgbReserved = 0;
-	}
-	memset(&fh, 0, sizeof(BITMAPFILEHEADER));
-	memset(&ih, 0, sizeof(BITMAPINFOHEADER));
-	memset(&rgb, 0, sizeof(RGBQUAD) * 256);
-	fh.bfOffBits = 1078; // RGBQUAD + InfoHeader + FileHeader only 8bit mode if 24bit == 54; 40+ 14;
+	// 비트맵 이미지로 만들기
+	char inputImage[50] = "lena_bmp_512x512_new.bmp";//"F:/github\/LEC_ImageProcessing/LEC_ImageProcessing/LEC_ImageProcessing/lena_bmp_512x512_new.bmp";
+	FILE* infile;
 
-	fh.bfSize = imageSize * imageSize + sizeof(RGBQUAD) * 256 + sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
-	fh.bfType = 19778;
+	fopen_s(&infile, inputImage, "rb"); // "Read Binary"
 
-	ih.biBitCount = 8;
-	ih.biHeight = imageSize;
-	ih.biPlanes = 1;
-	ih.biSize = 40;
-	ih.biSizeImage = imageSize * imageSize;
-	ih.biWidth = imageSize;
-	ih.biXPelsPerMeter = 0;
-	ih.biYPelsPerMeter = 0;
+	BITMAPFILEHEADER HF; //파일정보 선언(C에 내장되어 있음)
+	BITMAPINFOHEADER IF; //영상정보 선언
+	RGBQUAD hRGB[256];
 
-	// 파일 저장_bmp파일
-	fopen_s(&fp, "HW1-2.bmp", "wb");
-	fwrite(&fh, sizeof(BITMAPFILEHEADER), 1, fp);
-	fwrite(&ih, sizeof(BITMAPINFOHEADER), 1, fp);
-	fwrite(rgb, sizeof(RGBQUAD), 256, fp);
-	fwrite(imageBuffer, sizeof(unsigned char), imageSize * imageSize, fp);
-	fclose(fp);
+	fread(&HF, sizeof(BITMAPFILEHEADER), 1, infile);
+	fread(&IF, sizeof(BITMAPINFOHEADER), 1, infile);
+	fread(hRGB, sizeof(RGBQUAD), 256, infile);
+
+	BYTE* lpImg = new BYTE[IF.biSizeImage]; 
+	fread(lpImg, sizeof(char), imageSize * imageSize, rawfile);
+
+	FILE* outfile;
+	fopen_s(&outfile, "HW1-2(v3).bmp", "wb");
+	fwrite(&HF, sizeof(BITMAPFILEHEADER), 1, outfile);
+	fwrite(&IF, sizeof(BITMAPINFOHEADER), 1, outfile);
+	fwrite(hRGB, sizeof(RGBQUAD), 256, outfile);
+	fwrite(imageBuffer, sizeof(unsigned char), imageSize * imageSize, outfile);
+	fclose(outfile);
 
 	return 0;
 }
