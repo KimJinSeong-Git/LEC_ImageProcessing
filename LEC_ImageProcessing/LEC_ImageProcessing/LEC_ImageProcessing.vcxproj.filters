@@ -27,5 +27,8 @@
     <ClCompile Include="HW1-3.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\Byeo\Documents\카카오톡 받은 파일\HW1-1_aaj.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
