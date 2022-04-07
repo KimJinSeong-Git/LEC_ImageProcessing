@@ -9,4 +9,15 @@ img = Image.open(file)
 
 # image to numpy array
 img_np = np.array(img)
-print(img_np.shape)
+
+# count bright
+bright = np.zeros(255, np.uint16)
+count = 0
+for row in range(img_np.shape[0]):
+    for col in range(img_np.shape[1]):
+        curPix = img_np[row, col]
+        bright[curPix] = bright[curPix] + 1
+        count = count + 1
+
+print(bright.sum())
+print(img_np.size)
