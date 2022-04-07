@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import matplotlib.pyplot as plt
 from PIL import Image
 
 # load image
@@ -19,5 +20,6 @@ for row in range(img_np.shape[0]):
         bright[curPix] = bright[curPix] + 1
         count = count + 1
 
-print(bright.sum())
-print(img_np.size)
+# print graph
+plt.plot(bright)
+plt.show()
