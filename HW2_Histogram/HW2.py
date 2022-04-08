@@ -21,5 +21,6 @@ for row in range(img_np.shape[0]):
         count = count + 1
 
 # print graph
-plt.plot(bright)
+x = np.arange(255)
+plt.bar(x, bright, width=1.0)
 plt.show()
