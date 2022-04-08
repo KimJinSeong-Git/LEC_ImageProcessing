@@ -27,7 +27,13 @@ plt.show()
 # - 누적합
 sum = np.zeros(255, np.uint32)
 sum[0] = bright[0]
-for pixBright in range(1, 255):
-    sum[pixBright] = sum[pixBright-1] + bright[pixBright]
+for i in range(1, 255):
+    sum[i] = sum[i-1] + bright[i]
 
-print(sum)
+# - 정규화된 누적합
+nb_pix = sum[-1]
+norm_sum = np.zeros(255, np.uint32)
+for i in range(255):
+    norm_sum[i] = (sum[i] / nb_pix)*255 + 0.5 # 정규화된 누적 합 = (누적합 / 픽셀 수) * 최대 명도 & 반올림을 위한 +0.5
+
+print(norm_sum)
