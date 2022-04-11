@@ -6,7 +6,7 @@ from PIL import Image
 # load image
 file = "./HW2_Histogram/lena_bmp_512x512_new.bmp"
 img = Image.open(file)
-#img.show()
+img.show()
 
 # image to numpy array
 img_np = np.array(img)
@@ -20,8 +20,8 @@ for row in range(img_np.shape[0]):
 
 # print graph
 x = np.arange(255)
-plt.bar(x, bright, width=1.0)
-plt.show()
+#plt.bar(x, bright, width=1.0)
+#plt.show()
 
 # Histogram Equalization
 # - 누적합
@@ -36,4 +36,13 @@ norm_sum = np.zeros(255, np.uint32)
 for i in range(255):
     norm_sum[i] = (sum[i] / nb_pix)*255 + 0.5 # 정규화된 누적 합 = (누적합 / 픽셀 수) * 최대 명도 & 반올림을 위한 +0.5
 
-print(norm_sum)
+img_Eq = np.array(img)
+for row in range(img_Eq.shape[0]):
+    for col in range(img_Eq.shape[1]):
+        curBright = img_Eq[row, col]
+        img_Eq[row, col] = norm_sum[curBright]
+
+im = Image.fromarray(img_Eq)
+im.show()
+#plt.bar(x, bright, width=1.0)
+#plt.show()
