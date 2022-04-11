@@ -4,74 +4,62 @@ import matplotlib.pyplot as plt
 from PIL import Image
 
 def createHistogram(imgArray):
-    bright = np.zeros(255, np.uint16)
-    for row in range(img_np.shape[0]):
-        for col in range(img_np.shape[1]):
-            curPix = img_np[row, col]
+    bright = np.zeros(256, np.uint16)
+    for row in range(imgArray.shape[0]):
+        for col in range(imgArray.shape[1]):
+            curPix = imgArray[row, col]
             bright[curPix] = bright[curPix] + 1
             
     return bright
 
+def printGraph(histogram):
+    x = np.arange(256)
+    plt.bar(x, histogram, width=1.0)
+    plt.show()
 
-# load image
-file = "./HW2_Histogram/lena_bmp_512x512_new.bmp"
-img = Image.open(file)
-img.show()
+def prefixSum(histogram):
+    sum = np.zeros(255, np.uint32)
+    sum[0] = histogram[0]
+    for i in range(1, 255):
+        sum[i] = sum[i-1] + histogram[i]
+    return sum
 
-# image to numpy array
-img_np = np.array(img)
+def normalizeSum(histogram):
+    # 누적합 구하기
+    sum = prefixSum(histogram)
+    nb_pix = sum[-1]
+    norm_sum = np.zeros(255, np.uint32)
+    for i in range(255):
+        # 정규화된 누적 합 = (누적합 / 픽셀 수) * 최대 명도 & 반올림을 위한 +0.5
+        norm_sum[i] = (sum[i] / nb_pix)*255 + 0.5 
 
-# --------------- 1. count bright ---------------
-basic_histogram = createHistogram(img_np)
+    return norm_sum
 
-# print graph
-x = np.arange(255)
-plt.bar(x, basic_histogram, width=1.0)
-plt.show()
+def histogramEQ(imgArray):
+    norm_sum = normalizeSum(basic_histogram)
+    img_EQ = np.array(img)
 
-# --------------- 2. Histogram Equalization ---------------
-# - 누적합
-sum = np.zeros(255, np.uint32)
-sum[0] = basic_histogram[0]
-for i in range(1, 255):
-    sum[i] = sum[i-1] + basic_histogram[i]
+    for row in range(img_EQ.shape[0]):
+        for col in range(img_EQ.shape[1]):
+            curBright = img_EQ[row, col]
+            img_EQ[row, col] = norm_sum[curBright]
+    return img_EQ
 
-# - 정규화된 누적합
-nb_pix = sum[-1]
-norm_sum = np.zeros(255, np.uint32)
-for i in range(255):
-    norm_sum[i] = (sum[i] / nb_pix)*255 + 0.5 # 정규화된 누적 합 = (누적합 / 픽셀 수) * 최대 명도 & 반올림을 위한 +0.5
+if __name__ == '__main__':
+    # load image
+    file = "./HW2_Histogram/lena_bmp_512x512_new.bmp"
+    img = Image.open(file)
+    #img.show()
 
-# - 평활화 결과
-img_Eq = np.array(img)
-for row in range(img_Eq.shape[0]):
-    for col in range(img_Eq.shape[1]):
-        curBright = img_Eq[row, col]
-        img_Eq[row, col] = norm_sum[curBright]
+    # image to numpy array
+    img_np = np.array(img)
 
-im = Image.fromarray(img_Eq)
-im.show()
-#plt.bar(x, bright, width=1.0)
-#plt.show()
+    # --------------- 1. Histogram ---------------
+    basic_histogram = createHistogram(img_np)
+    printGraph(basic_histogram)
 
-# --------------- 3. Basic Contrast Stretching ---------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    # --------------- 2. Histogram Equalization ---------------
+    img_EQ = 
+    EQ_histogram = createHistogram(img_EQ)
+    printGraph(EQ_histogram)
+    # --------------- 3. Basic Contrast Stretching ---------------
